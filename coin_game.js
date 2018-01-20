@@ -6,14 +6,14 @@ const rl = readline.createInterface({
 });
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
-const newGameDate = new Date();
+const newGameDate = new Date() + '\n';
 
 let logPath = './log.txt';
 if(argv.log) logPath = argv.log;
 
 fs.writeFile(logPath, newGameDate, (err) => {
     if(err) throw err;
-    console.log('log has been created');
+    console.log('log has been created (' + logPath + ')');
 });
 startGame();
 
@@ -21,12 +21,18 @@ function startGame() {
     rl.question('Орел(1) или Решка(2)?\n', function (answer) {
         const correctVal = getRandom(1, 2);
         if (answer === '1' || answer === '2') {
+            let result = 'lose\n';
             if(correctVal === +answer){
-
+                result = 'win\n';
             }
-            startGame();
+            fs.appendFile(logPath, result, (err) => {
+                if(err) throw err;
+                startGame();
+            })
+        } else if(answer === '0'){
+            process.exit();
         } else {
-            console.log('Введите "1" - орел или "2" - Решка');
+            console.log('Введите "1" - орел или "2" - Решка. "0" - для выхода');
             startGame();
         }
     })
