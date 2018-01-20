@@ -5,7 +5,16 @@ const rl = readline.createInterface({
     'output': process.stdout
 });
 const fs = require('fs');
+const argv = require('minimist')(process.argv.slice(2));
+const newGameDate = new Date();
 
+let logPath = './log.txt';
+if(argv.log) logPath = argv.log;
+
+fs.writeFile(logPath, newGameDate, (err) => {
+    if(err) throw err;
+    console.log('log has been created');
+});
 startGame();
 
 function startGame() {
