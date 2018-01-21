@@ -30,7 +30,7 @@ function startGame() {
                 startGame();
             })
         } else if (answer === '0') {
-            logStat(logPath);
+            parseLog(logPath);
             rl.close();
         } else {
             console.log('Введите "1" - орел или "2" - Решка. "0" - для выхода');
@@ -39,7 +39,7 @@ function startGame() {
     })
 }
 
-function logStat(logPath) {
+function parseLog(logPath) {
     fs.readFile(logPath, (err, data) => {
         if (err) throw err;
         data = data.toString();
@@ -60,7 +60,7 @@ function logStat(logPath) {
                 if(lastVal === 'win' && currentCount > maxWin){
                     maxWin = currentCount;
                 }
-                if(lastVal === 'lose' && currentCount > maxWin){
+                if(lastVal === 'lose' && currentCount > maxLose){
                     maxLose = currentCount;
                 }
 
@@ -82,11 +82,13 @@ function logStat(logPath) {
             }
             lastVal = currentVal;
         }
-        currentVal = '';
-        iteration(lastVal);
+        currentVal = 'end';
+        iteration(currentVal);
 
         console.log('Общее количество партий:', dataArr.length);
         console.log('Количество побед:', winCount);
+        console.log('Количество поражений:', loseCount);
+        console.log('win/lose:', (winCount / loseCount).toFixed(2));
         console.log('Максимум побед подряд:', maxWin);
         console.log('Максимум поражений подряд:', maxLose);
 
