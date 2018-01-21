@@ -9,10 +9,10 @@ const argv = require('minimist')(process.argv.slice(2));
 const newGameDate = new Date() + '\n';
 
 let logPath = './log.txt';
-if(argv.log) logPath = argv.log;
+if (argv.log) logPath = argv.log;
 
 fs.writeFile(logPath, newGameDate, (err) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log('log has been created (' + logPath + ')');
 });
 startGame();
@@ -22,15 +22,16 @@ function startGame() {
         const correctVal = getRandom(1, 2);
         if (answer === '1' || answer === '2') {
             let result = 'lose\n';
-            if(correctVal === +answer){
+            if (correctVal === +answer) {
                 result = 'win\n';
             }
             fs.appendFile(logPath, result, (err) => {
-                if(err) throw err;
+                if (err) throw err;
                 startGame();
             })
-        } else if(answer === '0'){
-            process.exit();
+        } else if (answer === '0') {
+            logStat(logPath);
+            rl.close();
         } else {
             console.log('Введите "1" - орел или "2" - Решка. "0" - для выхода');
             startGame();
@@ -38,11 +39,64 @@ function startGame() {
     })
 }
 
-function getRandom(minVal = 0, maxVal = 10, isInteger = true){
-    if(isInteger){
+function logStat(logPath) {
+    fs.readFile(logPath, (err, data) => {
+        if (err) throw err;
+        data = data.toString();
+        let dataArr = data.split('\n');
+        dataArr = dataArr.slice(1, dataArr.length - 1);
+        console.log(dataArr);
+
+        let lastVal = '';
+        let currentVal = '';
+        let maxWin = 0;
+        let maxLose = 0;
+        let currentCount = 0;
+        let loseCount = 0;
+        let winCount = 0;
+
+        const iteration = (current) => {
+            if (lastVal !== current){
+                if(lastVal === 'win' && currentCount > maxWin){
+                    maxWin = currentCount;
+                }
+                if(lastVal === 'lose' && currentCount > maxWin){
+                    maxLose = currentCount;
+                }
+
+                currentCount = 0;
+            }
+            currentCount++;
+            lastVal = currentVal;
+            currentVal = current;
+        };
+
+        for (let i = 0; i < dataArr.length; i++) {
+            if(dataArr[i] ===  'win'){
+                winCount++;
+                iteration('win');
+            }
+            if(dataArr[i] ===  'lose'){
+                loseCount++;
+                iteration('lose');
+            }
+            lastVal = currentVal;
+        }
+        currentVal = '';
+        iteration(lastVal);
+
+        console.log('Общее количество партий:', dataArr.length);
+        console.log('Количество побед:', winCount);
+        console.log('Максимум побед подряд:', maxWin);
+        console.log('Максимум поражений подряд:', maxLose);
+
+    })
+}
+function getRandom(minVal = 0, maxVal = 10, isInteger = true) {
+    if (isInteger) {
         let result = minVal + Math.random() * (maxVal + 1 - minVal);
         return Math.floor(result);
-    }else{
+    } else {
         return minVal + Math.random() * (maxVal - minVal);
     }
 }
