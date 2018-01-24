@@ -1,0 +1,24 @@
+{
+  "name": "node.js_practice",
+  "version": "0.0.1",
+  "description": "learn",
+  "main": "coin-game.js",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tskon/Node.js_practice.git"
+  },
+  "author": "TsKon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tskon/Node.js_practice/issues"
+  },
+  "homepage": "https://github.com/Tskon/Node.js_practice#readme"
+}
