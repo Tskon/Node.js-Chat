@@ -17,24 +17,22 @@ const srv = http.createServer((req, res) => {
         if (err) throw err;
         answ = JSON.parse(answ);
         if (answ.code === 200 && response.statusCode === 200) {
-          console.log(answ.text.toString());
           res.writeHead(200, {'Content-Type': 'text/plain'});
-          res.end('text');
-
+          res.end(answ.text.toString());
         }
       });
     }
+  }else {
+
+    fs.readFile('./view/translater.html', (err, html) => {
+      if (err) throw err;
+      const $ = cheerio.load(html);
+
+      res.statusCode = 200;
+      res.write(html);
+      res.end();
+    })
   }
-
-  fs.readFile('./view/translater.html', (err, html) => {
-    if (err) throw err;
-    const $ = cheerio.load(html);
-
-    res.statusCode = 200;
-    res.write(html);
-    res.end();
-  })
 }).listen(port);
-
 
 console.log('srv has been started http://localhost:' + port + '/');
