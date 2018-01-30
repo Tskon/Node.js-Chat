@@ -1,13 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const request = require('request');
-const cheerio = require('cheerio');
 const url = require('url');
 const port = 80;
 
-
 const srv = http.createServer((req, res) => {
-  if (req.headers["x-requested-with"] == 'XMLHttpRequest') {
+  if (req.headers["x-requested-with"] === 'XMLHttpRequest') {
     let str = url.parse(req.url, true);
     if (str.pathname === '/en-ru') {
       const query = str.query;
@@ -26,7 +24,6 @@ const srv = http.createServer((req, res) => {
 
     fs.readFile('./view/translater.html', (err, html) => {
       if (err) throw err;
-      const $ = cheerio.load(html);
 
       res.statusCode = 200;
       res.write(html);
