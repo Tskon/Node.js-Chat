@@ -18,6 +18,7 @@ function addNews(data, wrapSelector) {
     fs.readFile('./index.html', function (err, file) {
       if (err) throw err;
       const $ = cheerio.load(file);
+      $('title').html('yandex news');
       $(wrapSelector).html(data);
       res.writeHead(200);
       res.write($.html());
