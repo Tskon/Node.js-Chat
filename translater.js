@@ -1,11 +1,40 @@
 const http = require('http');
-const fs = require('http');
+const fs = require('fs');
 const request = require('request');
 const cheerio = require('cheerio');
+const url = require('url');
+const port = 80;
 
-http.createServer((req, res) => {
-  fs.readFile('./index.html', (err, html) => {
 
+const srv = http.createServer((req, res) => {
+  if (req.headers["x-requested-with"] == 'XMLHttpRequest') {
+    let str = url.parse(req.url, true);
+    if (str.pathname === '/en-ru') {
+      const query = str.query;
+      const key = 'trnsl.1.1.20180130T094621Z.9e85b313d2bb6db4.550aff25cf2dd8585b9d068b15f7ac9c1eb3e896';
+      request('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' + key +
+        '&text=' + query.word + '&lang=en-ru', (err, response, answ) => {
+        if (err) throw err;
+        answ = JSON.parse(answ);
+        if (answ.code === 200 && response.statusCode === 200) {
+          console.log(answ.text.toString());
+          res.writeHead(200, {'Content-Type': 'text/plain'});
+          res.end('text');
+
+        }
+      });
+    }
+  }
+
+  fs.readFile('./view/translater.html', (err, html) => {
+    if (err) throw err;
+    const $ = cheerio.load(html);
+
+    res.statusCode = 200;
+    res.write(html);
+    res.end();
   })
+}).listen(port);
 
-}).listen(80);
+
+console.log('srv has been started http://localhost:' + port + '/');

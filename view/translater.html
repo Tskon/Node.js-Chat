@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Translater</title>
+  <style>
+    .translater__answer {
+      width: 250px;
+      height: 30px;
+      border: 1px solid black;
+      margin: 10px 0;
+    }
+  </style>
+  </head>
+<body>
+<div class="translater">
+  <label for="eng">Eng</label>
+  <input type="text" name="english-word" id="eng" class="translater__input">
+  <input type="button" value="Перевести" class="translater__btn">
+  <div class="translater__answer"></div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+  document.querySelector('.translater__btn').addEventListener('click', () => {
+    httpGet('/en-ru?word=' + document.querySelector('.translater__input').value);
+  });
+  function httpGet(url) {
+    $.get(url, function (data) {
+      console.log(data);
+      $(".translater__answer").html(data);
+    });
+  }
+</script>
+</body>
+</html>
