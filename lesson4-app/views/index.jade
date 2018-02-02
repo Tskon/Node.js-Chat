@@ -1,14 +1,20 @@
+// Sample Jade template:
 doctype html
-html(lang="en")
-    head
-        title= lesson4app
-    body
-        h1 Jade - node template engine
-        #container
-            - if (youAreUsingJade)
-            You are amazing
-            - else
-            Get on it!
-            Get on it!
-            Get on it!
-            Get on it!
+html(lang='en')
+  head
+    title= 'lesson4_app'
+  body
+    h1 Jade - node template engine
+    form(action='/news-list')
+      label Выберите ресурс
+        select(name='resource')
+          option Yandex новости
+          option Mail.ru новости
+      label Выберите тему
+        select(name='theme')
+          option Спорт
+          option Экономика
+          option Политика
+      //input(type='button' value='Показать')
+      button Показать
+    #container
