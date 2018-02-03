@@ -4,14 +4,14 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const jade = require('jade');
 const cheerio = require('cheerio');
-const cookie = require('cookie')
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 80;
 let urlQuery;
 
-const renderIndex = (options = false) => {
-  if (options){
-
+const renderIndex = (req) => {
+  if (req.cookies){
+    console.log('cookies:', req.cookies)
   }
   return jade.renderFile('./lesson4-app/views/index.jade', (err, html) => {
     if (err) throw err;
@@ -29,6 +29,7 @@ function sendRequest(url, selector, callback) {
 }
 
 app.use(bodyParser());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   urlQuery = url.parse(req.url, true).query;
@@ -36,11 +37,20 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send(renderIndex());
+  res.send(renderIndex(req));
 });
 
 app.get('/news-list', (req, res) => {
   console.log(urlQuery);
+
+  res.cookie('resource', String(urlQuery['resource']), {
+    httpOnly: false,
+    maxAge: 60 * 60 // 1 hour
+  });
+  res.cookie('theme', String(urlQuery['theme']), {
+    httpOnly: false,
+    maxAge: 60 * 60 // 1 hour
+  });
 
   let newsTheme;
   let siteObj;
@@ -54,16 +64,16 @@ app.get('/news-list', (req, res) => {
     'economic': ['https://ria.ru/economy/', '.b-list__item'],
     'politic': ['https://ria.ru/politics/', '.b-list__item']
   };
-  switch (urlQuery.resource) {
+  switch (urlQuery['resource']) {
     case 'Yandex': {siteObj = urlYandex; break;}
     case 'Риа Новости': {siteObj = urlRiaNews; break;}
   }
-  switch (urlQuery.theme){
+  switch (urlQuery['theme']){
     case 'Спорт': {newsTheme = 'sport'; break;}
     case 'Экономика': {newsTheme = 'economic'; break;}
     case 'Политика': {newsTheme = 'politic'; break;}
   }
-  let html = renderIndex();
+  let html = renderIndex(req);
   const $ = cheerio.load(html);
 
   function yield(data) {

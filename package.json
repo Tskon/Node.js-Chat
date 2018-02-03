@@ -5,6 +5,7 @@
   "main": "coin-game.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "jade": "^1.11.0",
     "minimist": "^1.2.0",
