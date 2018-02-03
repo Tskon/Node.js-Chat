@@ -4,11 +4,15 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const jade = require('jade');
 const cheerio = require('cheerio');
+const cookie = require('cookie')
 const app = express();
 const PORT = 80;
 let urlQuery;
 
-const renderIndex = () => {
+const renderIndex = (options = false) => {
+  if (options){
+
+  }
   return jade.renderFile('./lesson4-app/views/index.jade', (err, html) => {
     if (err) throw err;
     return html;
@@ -37,6 +41,7 @@ app.get('/', (req, res) => {
 
 app.get('/news-list', (req, res) => {
   console.log(urlQuery);
+
   let newsTheme;
   let siteObj;
   const urlYandex = {
