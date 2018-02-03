@@ -16,7 +16,6 @@ const renderIndex = () => {
 };
 
 function sendRequest(url, selector, callback) {
-  console.log(url, selector);
   request(url, (err, res, html) => {
     if (err) throw err;
     const $ = cheerio.load(html);
@@ -45,14 +44,14 @@ app.get('/news-list', (req, res) => {
     'economic': ['https://news.yandex.ru/business.html?from=rubric', '.story'],
     'politic': ['https://news.yandex.ru/politics.html?from=rubric', '.story']
   };
-  const urlMailRu = {
-    'sport': [''],
-    'economic': [''],
-    'politic': ['']
+  const urlRiaNews = {
+    'sport': ['https://rsport.ria.ru/hockey/', '.b-list__item'],
+    'economic': ['https://ria.ru/economy/', '.b-list__item'],
+    'politic': ['https://ria.ru/politics/', '.b-list__item']
   };
   switch (urlQuery.resource) {
     case 'Yandex': {siteObj = urlYandex; break;}
-    case 'Mail.ru': {siteObj = urlMailRu; break;}
+    case 'Риа Новости': {siteObj = urlRiaNews; break;}
   }
   switch (urlQuery.theme){
     case 'Спорт': {newsTheme = 'sport'; break;}
@@ -67,7 +66,6 @@ app.get('/news-list', (req, res) => {
     res.send($.html());
   }
   sendRequest(siteObj[newsTheme][0], siteObj[newsTheme][1], yield);
-
 });
 
 app.listen(PORT, () => {
