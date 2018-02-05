@@ -2,7 +2,7 @@ const express = require('express');
 const url = require('url');
 const bodyParser = require('body-parser');
 const request = require('request');
-const jade = require('jade');
+const jade = require('pug');
 const cheerio = require('cheerio');
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -30,7 +30,6 @@ function sendRequest(url, selector, callback) {
 
 app.use(bodyParser());
 app.use(cookieParser());
-
 app.use((req, res, next) => {
   urlQuery = url.parse(req.url, true).query;
   next();

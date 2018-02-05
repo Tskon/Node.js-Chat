@@ -9,6 +9,7 @@
     "express": "^4.16.2",
     "jade": "^1.11.0",
     "minimist": "^1.2.0",
+    "pug": "^2.0.0-rc.4",
     "request": "^2.83.0"
   },
   "devDependencies": {},
