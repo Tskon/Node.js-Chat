@@ -8,19 +8,17 @@ const app = express();
 const PORT = 80;
 let urlQuery;
 
-const renderIndex = () => {
-  return jade.renderFile('./lesson4-app/views/index.jade', (err, html) => {
-    if (err) throw err;
-    return html;
-  });
-};
+app.set('views', './lesson4-app/views');
+app.set('view engine', 'jade');
 
 function sendRequest(url, selector, callback) {
-  console.log(url, selector);
+  // console.log(url, selector);
   request(url, (err, res, html) => {
     if (err) throw err;
+
     const $ = cheerio.load(html);
     let selection = $(selector);
+    console.log();
     callback(selection.html());
   });
 }
@@ -33,11 +31,11 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send(renderIndex());
+
+  res.render('index', {title: 'Lesson4'})
 });
 
 app.get('/news-list', (req, res) => {
-  console.log(urlQuery);
   let newsTheme;
   let siteObj;
   const urlYandex = {
@@ -46,26 +44,44 @@ app.get('/news-list', (req, res) => {
     'politic': ['https://news.yandex.ru/politics.html?from=rubric', '.story']
   };
   const urlMailRu = {
-    'sport': [''],
-    'economic': [''],
-    'politic': ['']
+    'sport': ['https://sport.mail.ru/', 'cols__inner'],
+    'economic': ['https://news.mail.ru/economics/', 'cols__inner'],
+    'politic': ['https://news.mail.ru/politics/', 'cols__inner']
   };
   switch (urlQuery.resource) {
-    case 'Yandex': {siteObj = urlYandex; break;}
-    case 'Mail.ru': {siteObj = urlMailRu; break;}
+    case 'Yandex': {
+      siteObj = urlYandex;
+      break;
+    }
+    case 'Mail.ru': {
+      siteObj = urlMailRu;
+      break;
+    }
   }
-  switch (urlQuery.theme){
-    case 'Спорт': {newsTheme = 'sport'; break;}
-    case 'Экономика': {newsTheme = 'economic'; break;}
-    case 'Политика': {newsTheme = 'politic'; break;}
+  switch (urlQuery.theme) {
+    case 'Спорт': {
+      newsTheme = 'sport';
+      break;
+    }
+    case 'Экономика': {
+      newsTheme = 'economic';
+      break;
+    }
+    case 'Политика': {
+      newsTheme = 'politic';
+      break;
+    }
   }
   let html = renderIndex();
   const $ = cheerio.load(html);
 
   function yield(data) {
+    data = data || '';
+    // console.log(data);
     $('#container').html(data);
     res.send($.html());
   }
+
   sendRequest(siteObj[newsTheme][0], siteObj[newsTheme][1], yield);
 
 });

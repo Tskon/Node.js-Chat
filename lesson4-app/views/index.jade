@@ -2,7 +2,7 @@
 doctype html
 html(lang='en')
   head
-    title= 'lesson4_app'
+    title!= title
   body
     h1 Jade - node template engine
     form(action='/news-list')
@@ -15,6 +15,5 @@ html(lang='en')
           option Спорт
           option Экономика
           option Политика
-      //input(type='button' value='Показать')
       button Показать
     #container
