@@ -1,20 +1,21 @@
 const express = require('express');
 const url = require('url');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const request = require('request');
-const jade = require('jade');
+const pug = require('pug');
 const cheerio = require('cheerio');
 const app = express();
 const PORT = 80;
 let urlQuery;
 
 app.set('views', './lesson4-app/views');
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 function sendRequest(url, selector, callback) {
   // console.log(url, selector);
   request(url, (err, res, html) => {
-    if (err) throw err;
+    if (err) console.log(err);
 
     const $ = cheerio.load(html);
     let selection = $(selector);
@@ -24,6 +25,7 @@ function sendRequest(url, selector, callback) {
 }
 
 app.use(bodyParser());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   urlQuery = url.parse(req.url, true).query;
@@ -31,11 +33,21 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-
-  res.render('index', {title: 'Lesson4'})
+  res.render('index', {title: 'Lesson4', newsFrom: {site: null, theme: null}})
 });
 
 app.get('/news-list', (req, res) => {
+  // set cookie
+  const cookieStr = `{"site": "${urlQuery.resource}","theme": "${urlQuery.theme}"}`;
+  res.cookie('news-from', cookieStr);
+
+  // get cookie
+  let cookieNewsFrom = {site: null, theme: null};
+  if (req.cookies['news-from']){
+    cookieNewsFrom = JSON.parse(req.cookies['news-from']);
+  }
+
+  // vars for request
   let newsTheme;
   let siteObj;
   const urlYandex = {
@@ -72,17 +84,24 @@ app.get('/news-list', (req, res) => {
       break;
     }
   }
-  let html = renderIndex();
-  const $ = cheerio.load(html);
 
-  function yield(data) {
-    data = data || '';
-    // console.log(data);
-    $('#container').html(data);
-    res.send($.html());
-  }
+  // render page
+  console.log(cookieNewsFrom);
+  let html = res.render('index', {title: 'News', newsFrom: cookieNewsFrom}, (err, html) => {
+    if (err) throw err;
+    const $ = cheerio.load(html);
 
-  sendRequest(siteObj[newsTheme][0], siteObj[newsTheme][1], yield);
+    // send request
+    sendRequest(siteObj[newsTheme][0], siteObj[newsTheme][1], yield);
+
+    // request callback
+    function yield(data) {
+      data = data || '';
+      $('#container').html(data);
+      res.send($.html());
+    }
+
+  });
 
 });
 

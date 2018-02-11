@@ -1,0 +1,38 @@
+// Sample Jade template:
+doctype html
+html(lang='en')
+  head
+    //- var newsFrom = newsFrom || {site: null, theme: null}
+    - var site = newsFrom.site
+    - var theme = newsFrom.theme
+    - console.log(site, theme)
+  title!= title
+body
+  h1 Jade - node template engine
+  form(action='/news-list')
+    label Выберите ресурс
+      select(name='resource')
+        if site == 'Yandex'
+          option(selected) Yandex
+        else
+          option Yandex
+        if site == 'Риа Новости'
+          option(selected) Риа Новости
+        else
+          option Риа Новости
+    label Выберите тему
+      select(name='theme')
+        if theme == 'Спорт'
+          option(selected) Спорт
+        else
+          option Спорт
+        if theme == 'Экономика'
+          option(selected) Экономика
+        else
+          option Экономика
+        if theme == 'Политика'
+          option(selected) Политика
+        else
+          option Политика
+    button Показать
+  #container
