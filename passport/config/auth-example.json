@@ -1,0 +1,7 @@
+{
+    "google": {
+        "clientID": "373794025722-hupe58qi69br99dt5kpocvl6l6jkgjpr.apps.googleusercontent.com",
+        "clientSecret": "WI2EhTA3XnZhQ0kuikemQTyc",
+        "callbackURL": "/auth/google/callback"
+    }
+}
